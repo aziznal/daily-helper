@@ -35,7 +35,30 @@ export interface Database {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      people: {
+        Row: {
+          created_at: string
+          has_issue: boolean
+          has_talked: boolean
+          id: string
+          name: string | null
+        }
+        Insert: {
+          created_at?: string
+          has_issue?: boolean
+          has_talked?: boolean
+          id?: string
+          name?: string | null
+        }
+        Update: {
+          created_at?: string
+          has_issue?: boolean
+          has_talked?: boolean
+          id?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
