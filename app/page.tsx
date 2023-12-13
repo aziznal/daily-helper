@@ -82,8 +82,6 @@ export default function Home() {
       setUsers(users);
     };
 
-    fetchUsers();
-
     // add self to the list of people when first joining
     const addSelf = async () => {
       const { data, error } = await supabase
@@ -106,7 +104,7 @@ export default function Home() {
       setSelf(data);
     };
 
-    addSelf();
+    addSelf().then(fetchUsers);
 
     // track when a new person joins
     const personJoinsSub = supabase
