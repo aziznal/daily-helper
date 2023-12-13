@@ -166,7 +166,7 @@ export default function Home() {
 
   return (
     <div className="justify-center items-center h-full flex bg-neutral-900 flex-col">
-      <ul className="grid grid-cols-4 items-center justify-center gap-12 w-[800px] p-4 transition-all">
+      <ul className="flex flex-wrap items-center justify-center gap-12 p-4 transition-all mb-12">
         {users.map((user) => (
           <li
             className="text-white w-[200px] flex flex-col items-center justify-top transition-all"
