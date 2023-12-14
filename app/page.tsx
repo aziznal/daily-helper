@@ -3,7 +3,7 @@
 import { Database } from "@/database.types";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useCallback, useEffect, useState } from "react";
-import { PersonStanding, Check, RotateCwIcon, Hand } from "lucide-react";
+import { PersonStanding, Check, Hand } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ export default function Home() {
 
     const { data, error } = await supabase
       .from("people")
-      .update({ has_talked: !self.has_talked, has_issue: false })
+      .update({ has_talked: !self.has_talked })
       .eq("id", self?.id)
       .select()
       .single();
@@ -44,7 +44,7 @@ export default function Home() {
 
     const { data, error } = await supabase
       .from("people")
-      .update({ has_issue: !self.has_issue, has_talked: false })
+      .update({ has_issue: !self.has_issue })
       .eq("id", self?.id)
       .select()
       .single();
@@ -188,15 +188,15 @@ export default function Home() {
               )}
             >
               <span>
-                {user.name} {user.id === self?.id && " (You)"}
-              </span>
-
-              <span>
                 {user.id !== self?.id && user.has_talked && " (Done)"}
               </span>
 
               <span>
                 {user.id !== self?.id && user.has_issue && " (Issue Raised!)"}
+              </span>
+
+              <span>
+                {user.name} {user.id === self?.id && " (You)"}
               </span>
             </div>
           </li>
@@ -208,17 +208,16 @@ export default function Home() {
         <Button
           variant="default"
           onClick={toggleSelfHasTalked}
+          disabled={self?.has_talked}
           className={cn(
             "flex gap-1 items-center justify-center w-[90px] hover:bg-green-700 hover:text-white",
             self?.has_talked && "bg-green-500",
             !self?.has_talked && "bg-blue-500"
           )}
         >
-          <span>{self?.has_talked ? "Reset" : "Finish"}</span>
+          <span>{self?.has_talked ? "Done" : "Finish"}</span>
 
-          {!self?.has_talked && <Check />}
-
-          {self?.has_talked && <RotateCwIcon />}
+          <Check />
         </Button>
 
         {/* Toggle Has Issue */}
