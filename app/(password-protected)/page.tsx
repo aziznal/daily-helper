@@ -137,8 +137,6 @@ export default function Home() {
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "people" },
         (payload) => {
-          console.log(payload.new);
-
           setUsers((users) =>
             users.map((user) => {
               if (user.id === payload.new.id) {

@@ -13,9 +13,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Database } from "@/database.types";
+import { CookieNames } from "@/lib/cookie-names";
 import { KeyValueConfigStore } from "@/lib/key-value-store-names";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { setCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -37,6 +40,7 @@ type PasswordForm = z.infer<typeof passwordSchema>;
 
 export default function EnterPasswordPage() {
   const supabase = createClientComponentClient<Database>();
+  const router = useRouter();
 
   const { toast } = useToast();
 
@@ -85,6 +89,9 @@ export default function EnterPasswordPage() {
     });
 
     setIsSubmitting(false);
+    setCookie(CookieNames.IsAuthenticated, "yeah pretty much");
+
+    router.push("/");
   };
 
   return (
