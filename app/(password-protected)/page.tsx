@@ -1,7 +1,7 @@
 "use client";
 
 import { Database } from "@/database.types";
-import { getCookie } from "cookies-next";
+import { getCookie, hasCookie } from "cookies-next";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useCallback, useEffect, useState } from "react";
 import { PersonStanding, Check, Hand } from "lucide-react";
@@ -18,9 +18,7 @@ export default function Home() {
   const [self, setSelf] = useState<Person | null>(null);
   const { toast } = useToast();
 
-  const userHasNameCookie = document.cookie.includes(
-    `${CookieNames.UserName}=`
-  );
+  const userHasNameCookie = hasCookie(CookieNames.UserName);
 
   const toggleSelfHasTalked = useCallback(async () => {
     if (!self) return;
