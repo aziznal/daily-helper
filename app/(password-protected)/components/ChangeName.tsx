@@ -21,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Database } from "@/database.types";
+import { CookieNames } from "@/lib/cookie-names";
 import { Person } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -31,6 +32,7 @@ import { z } from "zod";
 
 type ChangeNameComponentProps = {
   person: Person;
+  showDialogByDefault?: boolean;
 };
 
 const nameChangeFormSchema = z.object({
@@ -44,11 +46,14 @@ const nameChangeFormSchema = z.object({
 
 type NameForm = z.infer<typeof nameChangeFormSchema>;
 
-export default function ChangeName({ person }: ChangeNameComponentProps) {
+export default function ChangeName({
+  person,
+  showDialogByDefault,
+}: ChangeNameComponentProps) {
   const supabase = createClientComponentClient<Database>();
   const { toast } = useToast();
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(showDialogByDefault);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<NameForm>({
@@ -57,6 +62,10 @@ export default function ChangeName({ person }: ChangeNameComponentProps) {
       name: "",
     },
   });
+
+  const storeNameInCookie = (name: string) => {
+    document.cookie = `${CookieNames.UserName}=${name}`;
+  };
 
   const onSubmit = async (submittedValues: NameForm) => {
     if (isSubmitting) return;
@@ -81,6 +90,7 @@ export default function ChangeName({ person }: ChangeNameComponentProps) {
     setIsSubmitting(false);
 
     form.reset();
+    storeNameInCookie(submittedValues.name);
     setIsOpen(false);
   };
 

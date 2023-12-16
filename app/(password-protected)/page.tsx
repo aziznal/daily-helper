@@ -1,6 +1,7 @@
 "use client";
 
 import { Database } from "@/database.types";
+import { getCookie } from "cookies-next";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useCallback, useEffect, useState } from "react";
 import { PersonStanding, Check, Hand } from "lucide-react";
@@ -9,12 +10,17 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Person } from "@/types";
 import ChangeName from "./components/ChangeName";
+import { CookieNames } from "@/lib/cookie-names";
 
 export default function Home() {
   const supabase = createClientComponentClient<Database>();
   const [users, setUsers] = useState<Person[]>([]);
   const [self, setSelf] = useState<Person | null>(null);
   const { toast } = useToast();
+
+  const userHasNameCookie = document.cookie.includes(
+    `${CookieNames.UserName}=`
+  );
 
   const toggleSelfHasTalked = useCallback(async () => {
     if (!self) return;
@@ -84,10 +90,14 @@ export default function Home() {
 
     // add self to the list of people when first joining
     const addSelf = async () => {
+      const name = userHasNameCookie
+        ? getCookie(CookieNames.UserName)
+        : "Too Lazy to Enter Name - " + Math.random().toString(36).substring(7);
+
       const { data, error } = await supabase
         .from("people")
         .insert({
-          name: "John Doe " + Math.random().toString(36).substring(7),
+          name,
         })
         .select()
         .single();
@@ -146,7 +156,7 @@ export default function Home() {
     return () => {
       personJoinsSub.unsubscribe();
     };
-  }, [supabase, toast]);
+  }, [supabase, toast, userHasNameCookie]);
 
   const handleUnload = useCallback(async () => {
     if (!self) return;
@@ -190,7 +200,10 @@ export default function Home() {
               {/* User is self*/}
               {user.id === self?.id && (
                 <span className="text-center">
-                  <ChangeName person={user} />{" "}
+                  <ChangeName
+                    person={user}
+                    showDialogByDefault={!userHasNameCookie}
+                  />{" "}
                   {user.id === self?.id && " (You)"}
                 </span>
               )}
