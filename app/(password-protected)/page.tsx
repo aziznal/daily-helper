@@ -7,8 +7,8 @@ import { PersonStanding, Check, Hand } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-
-type Person = Database["public"]["Tables"]["people"]["Row"];
+import { Person } from "@/types";
+import ChangeName from "./components/ChangeName";
 
 export default function Home() {
   const supabase = createClientComponentClient<Database>();
@@ -187,17 +187,24 @@ export default function Home() {
                 user.id !== self?.id && user.has_issue && "text-red-500"
               )}
             >
-              <span>
-                {user.id !== self?.id && user.has_talked && " (Done)"}
-              </span>
+              {/* User is self*/}
+              {user.id === self?.id && (
+                <span className="text-center">
+                  <ChangeName person={user} />{" "}
+                  {user.id === self?.id && " (You)"}
+                </span>
+              )}
 
-              <span>
-                {user.id !== self?.id && user.has_issue && " (Issue Raised!)"}
-              </span>
+              {/* User is not self */}
+              {user.id !== self?.id && (
+                <span>
+                  {user.name} {user.id === self?.id && " (You)"}
+                </span>
+              )}
 
-              <span>
-                {user.name} {user.id === self?.id && " (You)"}
-              </span>
+              <span>{!user.has_issue && user.has_talked && " (Done)"}</span>
+
+              <span>{user.has_issue && " (Issue Raised!)"}</span>
             </div>
           </li>
         ))}
