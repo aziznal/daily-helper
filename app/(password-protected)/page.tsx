@@ -1,22 +1,25 @@
 "use client";
 
 import { Database } from "@/database.types";
-import { getCookie, hasCookie } from "cookies-next";
+import { deleteCookie, getCookie, hasCookie } from "cookies-next";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useCallback, useEffect, useState } from "react";
-import { PersonStanding, Check, Hand } from "lucide-react";
+import { PersonStanding, Check, Hand, LogOut } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Person } from "@/types";
 import ChangeName from "./components/ChangeName";
 import { CookieNames } from "@/lib/cookie-names";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const supabase = createClientComponentClient<Database>();
   const [users, setUsers] = useState<Person[]>([]);
   const [self, setSelf] = useState<Person | null>(null);
   const { toast } = useToast();
+
+  const router = useRouter();
 
   const userHasNameCookie = hasCookie(CookieNames.UserName);
 
@@ -170,6 +173,18 @@ export default function Home() {
     };
   }, [handleUnload]);
 
+  const leave = () => {
+    if (!self) return;
+
+    // remove self from the list of people when leaving
+    navigator.sendBeacon(`/api/leave/${self.id}`);
+
+    // clear auth cookie
+    deleteCookie(CookieNames.IsAuthenticated);
+
+    return router.push("/exited");
+  };
+
   return (
     <div className="justify-center items-center h-full flex bg-neutral-900 flex-col">
       <ul className="flex flex-wrap items-center justify-center gap-12 p-4 transition-all mb-12">
@@ -249,6 +264,16 @@ export default function Home() {
           <span>{self?.has_issue ? "Hand Raised!" : "Raise Hand"}</span>
 
           <Hand />
+        </Button>
+
+        <Button
+          variant="destructive"
+          onClick={leave}
+          className={cn("flex gap-1 items-center justify-center")}
+        >
+          <span>Leave</span>
+
+          <LogOut />
         </Button>
       </div>
     </div>

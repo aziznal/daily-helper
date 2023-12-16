@@ -3,6 +3,7 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
+import Link from "next/link";
 
 const fontClassName = Roboto({
   subsets: ["latin"],
@@ -24,6 +25,18 @@ export default function RootLayout({
       <body className={cn(fontClassName.className, "h-full")}>
         {children}
         <Toaster />
+
+        <footer className="bg-neutral-900 text-neutral-500 py-8 text-center flex flex-col gap-3">
+          <span>Abdulaziz Nal - 2023 (Github @aziznal)</span>
+
+          <Link
+            className="underline"
+            href="https://github.com/aziznal/daily-helper"
+            target="_blank"
+          >
+            Project Github Link
+          </Link>
+        </footer>
       </body>
     </html>
   );
