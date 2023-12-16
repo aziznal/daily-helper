@@ -81,6 +81,10 @@ export default function EnterPasswordPage() {
         description: "Please try again.",
         variant: "destructive",
       });
+
+      setIsSubmitting(false);
+
+      return;
     }
 
     toast({
